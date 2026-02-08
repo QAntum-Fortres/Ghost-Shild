@@ -1,6 +1,6 @@
 /**
- * GATEKEEPER SYSTEM v1.1.0
- * CYBERPUNK PAYMENT GATEWAY SIMULATION
+ * GATEKEEPER SYSTEM v1.2.0
+ * CYBERPUNK PAYMENT GATEWAY & REDIRECT ENGINE
  * COPYRIGHT QANTUM NEXUS 2025
  */
 
@@ -8,6 +8,15 @@ class PaymentGateway {
     constructor() {
         this.premiumKey = 'veritas_premium_access';
         this.overlay = null;
+
+        // PAYMENT DESTINATIONS (Placeholder professional links)
+        this.endpoints = {
+            'stripe_basic': 'https://buy.stripe.com/test_basic_tier_link',
+            'stripe_premium': 'https://buy.stripe.com/test_premium_tier_link',
+            'paypal_premium': 'https://www.paypal.com/checkoutnow?token=SIMULATED_TOKEN',
+            'crypto_premium': 'https://commerce.coinbase.com/checkout/simulated'
+        };
+
         this.init();
     }
 
@@ -35,12 +44,10 @@ class PaymentGateway {
         const existingOverlay = document.getElementById('paywall-overlay');
 
         if (existingOverlay) {
-            console.log("Gatekeeper: Attaching to existing DOM paywall.");
             this.overlay = existingOverlay;
             this.overlay.style.display = 'flex'; // Ensure it's visible
             document.body.style.overflow = 'hidden';
         } else {
-            console.log("Gatekeeper: Injecting dynamic paywall.");
             this.renderPaywall();
         }
     }
@@ -97,7 +104,7 @@ class PaymentGateway {
                 </div>
 
                 <div class="terminal-status" id="payment-status">
-                    > WAITING FOR INPUT...
+                    > WAITING FOR SECURE INPUT...
                 </div>
             </div>
         `;
@@ -111,39 +118,36 @@ class PaymentGateway {
     async processPayment(method) {
         // Handle both dynamic and static ID scenarios
         const statusEl = document.getElementById('payment-status');
-        if (!statusEl) {
-            console.error("Payment status element not found.");
-            return;
-        }
+        if (!statusEl) return;
 
-        // Simulation Sequence
+        // Visual Feedback
         statusEl.innerHTML = `> INITIATING HANDSHAKE WITH ${method.toUpperCase()}...`;
-        statusEl.className = 'processing-status active'; // update class if needed
+        statusEl.style.color = '#00ffcc';
 
-        await this.sleep(800);
-
-        statusEl.innerHTML = `> VERIFYING BIOMETRICS...`;
-        await this.sleep(1200);
-
-        statusEl.innerHTML = `> ESTABLISHING SECURE CONNECTION [TLS 1.3]...`;
         await this.sleep(1000);
-
-        statusEl.innerHTML = `> PROCESSING TRANSACTION...`;
+        statusEl.innerHTML = `> GENERATING CHECKOUT SESSION...`;
         await this.sleep(1500);
 
-        // 95% Success Rate
-        if (Math.random() > 0.05) {
-            statusEl.innerHTML = `<span style="color: #00ffcc;">> TRANSACTION APPROVED. ACCESS GRANTED.</span>`;
-            statusEl.style.borderColor = '#00ffcc';
+        statusEl.innerHTML = `> REDIRECTING TO SECURE GATEWAY...`;
+        await this.sleep(800);
 
+        // REAL REDIRECT LOGIC
+        const targetUrl = this.endpoints[method] || this.endpoints['stripe_premium'];
+
+        // In a real production app, this would be a fetch call to get a real session URL.
+        // For now, we redirect to the defined target.
+        console.log(`GATEKEEPER: Redirecting to ${targetUrl}`);
+
+        // To simulate success for the demo without leaves the page if links are broken:
+        if (targetUrl.includes('test_')) {
+            statusEl.innerHTML = `<span style="color: #ffaa00;">> DEV_MODE: SIMULATING SUCCESSFUL RETURN...</span>`;
             await this.sleep(1000);
-
-            // Unlock
             localStorage.setItem(this.premiumKey, 'true');
             this.unlock();
+            alert("ПЛАЩАНЕТО Е УСПЕШНО (СИМУЛАЦИЯ). ДОСТЪПЪТ Е ОТКЛЮЧЕН.");
         } else {
-            statusEl.innerHTML = `<span style="color: #ff0055;">> TRANSACTION FAILED. INSUFFICIENT FUNDS.</span>`;
-            statusEl.style.borderColor = '#ff0055';
+            // Actual redirect for working links
+            window.location.href = targetUrl;
         }
     }
 
@@ -159,10 +163,7 @@ class PaymentGateway {
             const el = document.getElementById('paywall-overlay');
             if (el) {
                 el.style.opacity = '0';
-                setTimeout(() => {
-                    el.remove();
-                    document.body.style.overflow = 'auto';
-                }, 500);
+                setTimeout(() => { el.remove(); document.body.style.overflow = 'auto'; }, 500);
             }
         }
     }
