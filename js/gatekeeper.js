@@ -129,26 +129,13 @@ class PaymentGateway {
         await this.sleep(1500);
 
         statusEl.innerHTML = `> REDIRECTING TO SECURE GATEWAY...`;
-        await this.sleep(800);
+        await this.sleep(1000);
 
-        // REAL REDIRECT LOGIC
+        // REAL REDIRECT ENGINE - NO MORE SIMULATIONS
         const targetUrl = this.endpoints[method] || this.endpoints['stripe_premium'];
 
-        // In a real production app, this would be a fetch call to get a real session URL.
-        // For now, we redirect to the defined target.
-        console.log(`GATEKEEPER: Redirecting to ${targetUrl}`);
-
-        // To simulate success for the demo without leaves the page if links are broken:
-        if (targetUrl.includes('test_')) {
-            statusEl.innerHTML = `<span style="color: #ffaa00;">> DEV_MODE: SIMULATING SUCCESSFUL RETURN...</span>`;
-            await this.sleep(1000);
-            localStorage.setItem(this.premiumKey, 'true');
-            this.unlock();
-            alert("ПЛАЩАНЕТО Е УСПЕШНО (СИМУЛАЦИЯ). ДОСТЪПЪТ Е ОТКЛЮЧЕН.");
-        } else {
-            // Actual redirect for working links
-            window.location.href = targetUrl;
-        }
+        console.log(`GATEKEEPER: Executing hard redirect to ${targetUrl}`);
+        window.location.href = targetUrl;
     }
 
     unlock() {
