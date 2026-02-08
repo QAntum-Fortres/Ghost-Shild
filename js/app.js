@@ -2,6 +2,58 @@
 // Powered by validator.js
 
 document.addEventListener('DOMContentLoaded', () => {
+    // PAYWALL LOGIC
+    const paywallOverlay = document.getElementById('paywall-overlay');
+    const paymentStatus = document.getElementById('payment-status');
+    const statusText = document.getElementById('status-text');
+
+    // Check for existing "license"
+    const hasAccess = localStorage.getItem('veritas_premium_access');
+
+    if (!hasAccess) {
+        paywallOverlay.classList.add('active');
+    }
+
+    // Expose simulation function globally
+    window.simulatePayment = (provider) => {
+        const btns = document.querySelectorAll('.pay-btn');
+        btns.forEach(b => b.style.opacity = '0.5');
+        btns.forEach(b => b.disabled = true);
+
+        paymentStatus.style.display = 'block';
+
+        const steps = [
+            "HANDSHAKING SECURE SERVER...",
+            "VERIFYING CRYPTOGRAPHIC SIGNATURE...",
+            "ALLOCATING DEDICATED ENTROPY POOL...",
+            "ACCESS GRANTED."
+        ];
+
+        let step = 0;
+        const interval = setInterval(() => {
+            if (step >= steps.length) {
+                clearInterval(interval);
+                completePayment();
+            } else {
+                statusText.textContent = steps[step];
+                step++;
+            }
+        }, 800);
+    };
+
+    function completePayment() {
+        localStorage.setItem('veritas_premium_access', 'true');
+        statusText.style.color = '#00f3ff';
+
+        setTimeout(() => {
+            paywallOverlay.style.opacity = '0';
+            setTimeout(() => {
+                paywallOverlay.classList.remove('active');
+                paywallOverlay.style.display = 'none'; // Ensure it's gone
+            }, 500);
+        }, 500);
+    }
+
     const input = document.getElementById('validator-input');
     const resultsPanel = document.getElementById('results-panel');
     const resultGrid = document.querySelector('.result-grid');
