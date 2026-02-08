@@ -1,5 +1,5 @@
 /**
- * GATEKEEPER SYSTEM v1.0.0
+ * GATEKEEPER SYSTEM v1.1.0
  * CYBERPUNK PAYMENT GATEWAY SIMULATION
  * COPYRIGHT QANTUM NEXUS 2025
  */
@@ -7,26 +7,56 @@
 class PaymentGateway {
     constructor() {
         this.premiumKey = 'veritas_premium_access';
-        this.modal = null;
         this.overlay = null;
         this.init();
     }
 
     init() {
-        // Check if premium access exists
+        // Expose methods globally for proper button interaction
+        window.processPayment = (method) => this.processPayment(method);
+        window.simulatePayment = (method) => this.processPayment(method); // Alias for legacy HTML
+
+        // Check if premium access already exists
         if (!localStorage.getItem(this.premiumKey)) {
-            this.renderPaywall();
+            // Wait for DOM to be ready before checking/rendering
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => this.enforcePaywall());
+            } else {
+                this.enforcePaywall();
+            }
         } else {
             console.log("ACCESS GRANTED: Premium user identified.");
+            this.removeExistingPaywall();
         }
+    }
 
-        // Expose method globally for buttons
-        window.processPayment = (method) => this.processPayment(method);
+    enforcePaywall() {
+        // Check if the paywall markup already exists in the DOM (static HTML)
+        const existingOverlay = document.getElementById('paywall-overlay');
+
+        if (existingOverlay) {
+            console.log("Gatekeeper: Attaching to existing DOM paywall.");
+            this.overlay = existingOverlay;
+            this.overlay.style.display = 'flex'; // Ensure it's visible
+            document.body.style.overflow = 'hidden';
+        } else {
+            console.log("Gatekeeper: Injecting dynamic paywall.");
+            this.renderPaywall();
+        }
+    }
+
+    removeExistingPaywall() {
+        const existingOverlay = document.getElementById('paywall-overlay');
+        if (existingOverlay) {
+            existingOverlay.remove();
+        }
+        document.body.style.overflow = 'auto';
     }
 
     renderPaywall() {
         // Create Overlay
         this.overlay = document.createElement('div');
+        this.overlay.id = 'paywall-overlay';
         this.overlay.className = 'paywall-overlay';
 
         // Create Modal HTML
@@ -79,11 +109,17 @@ class PaymentGateway {
     }
 
     async processPayment(method) {
+        // Handle both dynamic and static ID scenarios
         const statusEl = document.getElementById('payment-status');
-        if (!statusEl) return;
+        if (!statusEl) {
+            console.error("Payment status element not found.");
+            return;
+        }
 
         // Simulation Sequence
         statusEl.innerHTML = `> INITIATING HANDSHAKE WITH ${method.toUpperCase()}...`;
+        statusEl.className = 'processing-status active'; // update class if needed
+
         await this.sleep(800);
 
         statusEl.innerHTML = `> VERIFYING BIOMETRICS...`;
@@ -95,9 +131,10 @@ class PaymentGateway {
         statusEl.innerHTML = `> PROCESSING TRANSACTION...`;
         await this.sleep(1500);
 
-        if (Math.random() > 0.05) { // 95% Success Rate
-            statusEl.innerHTML = `<span style="color: #0f0;">> TRANSACTION APPROVED. ACCESS GRANTED.</span>`;
-            statusEl.style.borderColor = '#0f0';
+        // 95% Success Rate
+        if (Math.random() > 0.05) {
+            statusEl.innerHTML = `<span style="color: #00ffcc;">> TRANSACTION APPROVED. ACCESS GRANTED.</span>`;
+            statusEl.style.borderColor = '#00ffcc';
 
             await this.sleep(1000);
 
@@ -105,8 +142,8 @@ class PaymentGateway {
             localStorage.setItem(this.premiumKey, 'true');
             this.unlock();
         } else {
-            statusEl.innerHTML = `<span style="color: #f00;">> TRANSACTION FAILED. INSUFFICIENT FUNDS.</span>`;
-            statusEl.style.borderColor = '#f00';
+            statusEl.innerHTML = `<span style="color: #ff0055;">> TRANSACTION FAILED. INSUFFICIENT FUNDS.</span>`;
+            statusEl.style.borderColor = '#ff0055';
         }
     }
 
@@ -115,8 +152,18 @@ class PaymentGateway {
             this.overlay.style.opacity = '0';
             setTimeout(() => {
                 this.overlay.remove();
-                document.body.style.overflow = 'auto';
+                document.body.style.overflow = 'auto'; // Restore scrolling
             }, 500);
+        } else {
+            // Fallback if overlay wasn't stored in 'this' (e.g. static HTML case)
+            const el = document.getElementById('paywall-overlay');
+            if (el) {
+                el.style.opacity = '0';
+                setTimeout(() => {
+                    el.remove();
+                    document.body.style.overflow = 'auto';
+                }, 500);
+            }
         }
     }
 
@@ -126,6 +173,5 @@ class PaymentGateway {
 }
 
 // Initialize on Load
-document.addEventListener('DOMContentLoaded', () => {
-    new PaymentGateway();
-});
+// We invoke it immediately to bind window functions, but logic runs on DOMContentLoaded inside init if needed
+new PaymentGateway();
