@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMNESIA CURE | Neural Backpack</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/hub.css">
+    <link rel="stylesheet" href="css/paywall.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Outfit:wght@300..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="grid-background"></div>
+    <div class="scanline"></div>
+
+    <header class="hub-header">
+        <div class="logo">
+            <a href="index.html" class="logo-icon" style="text-decoration: none;">🧠</a>
+            <div class="logo-text">
+                <h1>AMNESIA CURE</h1>
+                <span class="tagline">NEURAL PERSISTENCE MODULE</span>
+            </div>
+        </div>
+        <div class="system-status" style="color: var(--brand-purple);">
+            <span class="status-dot"
+                style="background-color: var(--brand-purple); box-shadow: 0 0 10px var(--brand-purple);"></span>
+            MEMORY ACTIVE
+        </div>
+    </header>
+
+    <main class="hub-container">
+        <div class="dashboard-grid">
+            <div class="panel memory-stats">
+                <h3>System Memory</h3>
+                <div class="stat-row">
+                    <span>Total Recall:</span>
+                    <span class="value success">100%</span>
+                </div>
+                <div class="stat-row">
+                    <span>Fragment Loss:</span>
+                    <span class="value error">0.00%</span>
+                </div>
+                <div class="stat-row">
+                    <span>Cached Nodes:</span>
+                    <span class="value warning">1,024</span>
+                </div>
+            </div>
+
+            <div class="panel memory-stream">
+                <h3>Live Memory Stream</h3>
+                <div class="stream-log" id="memoryLog">
+                    <!-- JS will populate simulating live thoughts -->
+                    <div class="log-entry">> Initializing neural pathway... [OK]</div>
+                    <div class="log-entry">> Loading context vector... [OK]</div>
+                    <div class="log-entry">> Retrieving archival data... [PENDING]</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PAYWALL MODAL -->
+    <div id="paywall-overlay" class="paywall-overlay">
+        <div class="paywall-modal">
+            <div class="modal-header">
+                <span class="lock-icon">🔒</span> SECURITY CLEARANCE REQUIRED
+            </div>
+            <div class="modal-body">
+                <h2>NEURAL ACCESS RESTRICTED</h2>
+                <p>Deep memory retrieval requires Level 5 security clearance.</p>
+                <div class="pricing-tier">
+                    <div class="price">$199<small>/mo</small></div>
+                    <ul class="features">
+                        <li>✅ Infinite Context Window</li>
+                        <li>✅ Zero Forgetting Curve</li>
+                        <li>✅ Neural Encryption</li>
+                    </ul>
+                </div>
+                <div class="payment-methods">
+                    <button class="pay-btn stripe" onclick="window.simulatePayment('stripe')">
+                        <span>💳</span> PAY WITH CARD
+                    </button>
+                    <button class="pay-btn crypto" onclick="window.simulatePayment('crypto')">
+                        <span>₿</span> PAY WITH CRYPTO
+                    </button>
+                </div>
+                <div class="processing-status" id="payment-status">
+                    <div class="loader"></div>
+                    <span id="status-text">INITIALIZING SECURE CHANNEL...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/backpack.js"></script>
+    <script src="js/gatekeeper.js"></script>
+</body>
+
+</html>

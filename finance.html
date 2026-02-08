@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALGO-SCALE | Wealth Bridge</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/hub.css">
+    <link rel="stylesheet" href="css/paywall.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Outfit:wght@300..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="grid-background"></div>
+    <div class="scanline"></div>
+
+    <header class="hub-header">
+        <div class="logo">
+            <a href="index.html" class="logo-icon" style="text-decoration: none;">💸</a>
+            <div class="logo-text">
+                <h1>ALGO-SCALE</h1>
+                <span class="tagline">WEALTH BRIDGE ENGINE</span>
+            </div>
+        </div>
+        <div class="system-status" style="color: var(--brand-gold);">
+            <span class="status-dot"
+                style="background-color: var(--brand-gold); box-shadow: 0 0 10px var(--brand-gold);"></span>
+            MARKET OPEN
+        </div>
+    </header>
+
+    <main class="hub-container">
+        <div class="dashboard-grid">
+            <div class="panel ticker-board">
+                <h3>Live Revenue Feeds</h3>
+                <div class="ticker-item">
+                    <span>MRR</span>
+                    <span class="trend up">▲ $175,230.00</span>
+                </div>
+                <div class="ticker-item">
+                    <span>ARR</span>
+                    <span class="trend up">▲ $2.1M</span>
+                </div>
+            </div>
+            <div class="panel asset-allocation">
+                <h3>Reinvestment Protocol</h3>
+                <div class="allocation-bar">
+                    <div class="segment core" style="width: 40%">CORE</div>
+                    <div class="segment growth" style="width: 30%">GROWTH</div>
+                    <div class="segment rnd" style="width: 30%">R&D</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PAYWALL MODAL -->
+    <div id="paywall-overlay" class="paywall-overlay">
+        <div class="paywall-modal">
+            <div class="modal-header">
+                <span class="lock-icon">🔒</span> SECURITY CLEARANCE REQUIRED
+            </div>
+            <div class="modal-body">
+                <h2>FINANCIAL CORE LOCKED</h2>
+                <p>Advanced algorithmic trading requires institutional access.</p>
+                <div class="pricing-tier">
+                    <div class="price">$999<small>/mo</small></div>
+                    <ul class="features">
+                        <li>✅ HFT API (Nanosecond)</li>
+                        <li>✅ Quantum Arbitrage</li>
+                        <li>✅ Risk-Free Reinvestment</li>
+                    </ul>
+                </div>
+                <div class="payment-methods">
+                    <button class="pay-btn stripe" onclick="window.simulatePayment('stripe')">
+                        <span>💳</span> PAY WITH CARD
+                    </button>
+                    <button class="pay-btn crypto" onclick="window.simulatePayment('crypto')">
+                        <span>₿</span> PAY WITH CRYPTO
+                    </button>
+                </div>
+                <div class="processing-status" id="payment-status">
+                    <div class="loader"></div>
+                    <span id="status-text">INITIALIZING SECURE CHANNEL...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/finance.js"></script>
+    <script src="js/gatekeeper.js"></script>
+</body>
+
+</html>
