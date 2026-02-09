@@ -9,14 +9,6 @@ class PaymentGateway {
         this.premiumKey = 'veritas_premium_access';
         this.overlay = null;
 
-        // PAYMENT DESTINATIONS (Placeholder professional links)
-        this.endpoints = {
-            'stripe_basic': 'https://buy.stripe.com/test_basic_tier_link',
-            'stripe_premium': 'https://buy.stripe.com/test_premium_tier_link',
-            'paypal_premium': 'https://www.paypal.com/checkoutnow?token=SIMULATED_TOKEN',
-            'crypto_premium': 'https://commerce.coinbase.com/checkout/simulated'
-        };
-
         this.init();
     }
 
@@ -78,7 +70,7 @@ class PaymentGateway {
                 <div class="pricing-tiers">
                     <div class="tier standard">
                         <h3>OPERATOR</h3>
-                        <div class="price">$49.99<span>/mo</span></div>
+                        <div class="price">9.99<span>/mo</span></div>
                         <ul>
                             <li>Basic Metrics Access</li>
                             <li>Standard Latency</li>
@@ -90,7 +82,7 @@ class PaymentGateway {
                     <div class="tier premium glitch-border">
                         <div class="recommended-badge">RECOMMENDED</div>
                         <h3>ARCHITECT</h3>
-                        <div class="price">$199<span>/mo</span></div>
+                        <div class="price">99<span>/mo</span></div>
                         <ul>
                             <li>Full Neural Access</li>
                             <li>Zero Latency Channel</li>
@@ -124,18 +116,30 @@ class PaymentGateway {
         statusEl.innerHTML = `> INITIATING HANDSHAKE WITH ${method.toUpperCase()}...`;
         statusEl.style.color = '#00ffcc';
 
-        await this.sleep(1000);
-        statusEl.innerHTML = `> GENERATING CHECKOUT SESSION...`;
-        await this.sleep(1500);
+        try {
+             const response = await fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ paymentMethod: method })
+            });
 
-        statusEl.innerHTML = `> REDIRECTING TO SECURE GATEWAY...`;
-        await this.sleep(1000);
+            const data = await response.json();
 
-        // REAL REDIRECT ENGINE - NO MORE SIMULATIONS
-        const targetUrl = this.endpoints[method] || this.endpoints['stripe_premium'];
+            if (data.url) {
+                statusEl.innerHTML = `> REDIRECTING TO SECURE GATEWAY...`;
+                await this.sleep(1000);
+                window.location.href = data.url;
+            } else {
+                throw new Error('No redirect URL provided');
+            }
 
-        console.log(`GATEKEEPER: Executing hard redirect to ${targetUrl}`);
-        window.location.href = targetUrl;
+        } catch (error) {
+             console.error('Payment Error:', error);
+             statusEl.innerHTML = `> ERROR: SECURE CHANNEL FAILED. RETRY.`;
+             statusEl.style.color = '#ff0000';
+        }
     }
 
     unlock() {

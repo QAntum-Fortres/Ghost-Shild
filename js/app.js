@@ -113,59 +113,63 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Access the global validator object (ensure script loaded)
-        // The validator.js library usually exposes itself as `validator` globally in browser context
-        // Try accessing window.validator, or fallback if loaded differently.
-        const v = window.validator;
+        // Call Backend API
+        fetch('/api/validate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ input: value })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const results = data.results;
+            const checks = [
+                { label: 'EMAIL', key: 'isEmail' },
+                { label: 'URL', key: 'isURL' },
+                { label: 'IP ADDRESS', key: 'isIP' },
+                { label: 'S.W.I.F.T CODE', key: 'isBIC' },
+                { label: 'CREDIT CARD', key: 'isCreditCard' },
+                { label: 'CRYPTOCURRENCY', key: 'isBtcAddress' }, // Simplification
+                { label: 'ETH ADDRESS', key: 'isEthereumAddress' },
+                { label: 'UUID', key: 'isUUID' },
+                { label: 'JWT TOKEN', key: 'isJWT' },
+                { label: 'MAC ADDRESS', key: 'isMACAddress' },
+                { label: 'PORT', key: 'isPort' },
+                { label: 'JSON', key: 'isJSON' },
+                { label: 'BASE64', key: 'isBase64' },
+                { label: 'HEX COLOR', key: 'isHexColor' },
+                { label: 'SEMVER', key: 'isSemVer' }
+            ];
 
-        if (!v) {
-            resultGrid.innerHTML = '<div class="pill invalid">ERROR: Core Lib Missing</div>';
-            return;
-        }
+            let validCount = 0;
 
-        const checks = [
-            { label: 'EMAIL', check: v.isEmail },
-            { label: 'URL', check: v.isURL },
-            { label: 'IP ADDRESS', check: v.isIP },
-            { label: 'S.W.I.F.T CODE', check: v.isBIC }, // Business Identifier Code
-            { label: 'CREDIT CARD', check: v.isCreditCard },
-            { label: 'CRYPTOCURRENCY', check: (val) => v.isBtcAddress(val) || v.isEthereumAddress && v.isEthereumAddress(val) }, // Helper if avail
-            { label: 'UUID', check: v.isUUID },
-            { label: 'JWT TOKEN', check: v.isJWT },
-            { label: 'MAC ADDRESS', check: v.isMACAddress },
-            { label: 'PORT', check: v.isPort },
-            { label: 'JSON', check: v.isJSON },
-            { label: 'BASE64', check: v.isBase64 },
-            { label: 'HEX COLOR', check: v.isHexColor },
-            { label: 'SEMVER', check: v.isSemVer }
-        ];
+            checks.forEach(item => {
+                if (results[item.key]) {
+                    validCount++;
+                    addPill(item.label, true);
+                }
+            });
 
-        let validCount = 0;
-
-        checks.forEach(item => {
-            let isValid = false;
-            try {
-                isValid = item.check(value);
-            } catch (e) {
-                isValid = false;
+            // If nothing matched
+            if (validCount === 0) {
+                addPill('UNKNOWN FORMAT', false);
+                addPill('POSSIBLE MASKING', false);
             }
 
-            if (isValid) {
-                validCount++;
-                addPill(item.label, true);
+            // Sanitized Output
+            sanitizedOutput.textContent = data.sanitized;
+
+            // Update Entropy from backend if available, else client side logic remains
+            if (data.entropy) {
+                 // You could update entropy UI here if you wanted to precise it
             }
+
+        })
+        .catch(err => {
+            console.error('Validation API Error:', err);
+            resultGrid.innerHTML = '<div class="pill invalid">API ERROR</div>';
         });
-
-        // If nothing matched, show generic string
-        if (validCount === 0) {
-            addPill('UNKNOWN FORMAT', false);
-            addPill('POSSIBLE MASKING', false);
-        }
-
-        // Sanitization
-        let clean = v.trim(value);
-        if (v.escape) clean = v.escape(clean);
-        sanitizedOutput.textContent = clean;
     }
 
     function addPill(label, isValid) {
