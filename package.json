@@ -1,0 +1,21 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "bun test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QAntum-Fortres/Ghost-Shild.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/QAntum-Fortres/Ghost-Shild/issues"
+  },
+  "homepage": "https://github.com/QAntum-Fortres/Ghost-Shild#readme"
+}
