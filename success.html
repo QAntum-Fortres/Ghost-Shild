@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful | VERITAS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .success-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ffcc;
+            padding: 2rem;
+            max-width: 500px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+        }
+        h1 { color: #00ffcc; }
+        p { margin-bottom: 2rem; }
+        .btn {
+            background: #00ffcc;
+            color: black;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-background"></div>
+    <div class="success-card">
+        <h1>ACCESS GRANTED</h1>
+        <p>Your transaction has been verified on the blockchain. Welcome to the inner circle.</p>
+        <a href="/" class="btn" id="return-btn">RETURN TO TERMINAL</a>
+    </div>
+    <script>
+        document.getElementById('return-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.setItem('veritas_premium_access', 'true');
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
